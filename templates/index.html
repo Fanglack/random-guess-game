@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBER-GUESS // Number Quest</title>
+  <meta name="description" content="A futuristic random number guessing game built with Python, HTML, and CSS. Test your intuition and crack the vault code!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <!-- Ambient Background Canvas & Glow Elements -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-container">
+    <!-- Top Navigation / Controls Header -->
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-badge">SYSTEM V2.4</span>
+        <h1 class="brand-title">CYBER<span class="accent-text">GUESS</span></h1>
+      </div>
+
+      <div class="header-controls">
+        <button id="btn-sound-toggle" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">
+          <span id="sound-icon">🔊</span>
+        </button>
+        <button id="btn-stats-toggle" class="icon-btn" title="View Statistics" aria-label="View Statistics">
+          <span>📊</span>
+        </button>
+        <button id="btn-new-game" class="btn btn-secondary" title="Start New Game">
+          <span>↺ Reset</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Difficulty / Mode Switcher -->
+    <section class="mode-bar" aria-label="Select Difficulty">
+      <div class="mode-pill-group">
+        <button class="mode-pill" data-mode="easy">
+          <span class="mode-name">CASUAL</span>
+          <span class="mode-range">1 – 50</span>
+        </button>
+        <button class="mode-pill active" data-mode="medium">
+          <span class="mode-name">STANDARD</span>
+          <span class="mode-range">1 – 100</span>
+        </button>
+        <button class="mode-pill" data-mode="hard">
+          <span class="mode-name">HARDCORE</span>
+          <span class="mode-range">1 – 250</span>
+        </button>
+        <button class="mode-pill" data-mode="custom">
+          <span class="mode-name">CUSTOM</span>
+          <span class="mode-range">Setup ⚙️</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Custom Range Config (Hidden by default) -->
+    <section id="custom-range-panel" class="custom-panel hidden">
+      <div class="custom-inputs">
+        <div class="input-group">
+          <label for="custom-min">Min Value</label>
+          <input type="number" id="custom-min" value="1" min="1" max="9998" />
+        </div>
+        <div class="input-group">
+          <label for="custom-max">Max Value</label>
+          <input type="number" id="custom-max" value="500" min="2" max="9999" />
+        </div>
+        <div class="input-group">
+          <label for="custom-attempts">Max Attempts</label>
+          <input type="number" id="custom-attempts" value="8" min="3" max="25" />
+        </div>
+        <button id="btn-apply-custom" class="btn btn-primary btn-sm">Start Custom</button>
+      </div>
+    </section>
+
+    <!-- Main Game Board -->
+    <main class="game-main">
+      <!-- The Mystery Vault Display -->
+      <div class="vault-container">
+        <div class="vault-box" id="vault-box">
+          <div class="vault-corner tl"></div>
+          <div class="vault-corner tr"></div>
+          <div class="vault-corner bl"></div>
+          <div class="vault-corner br"></div>
+          
+          <div class="vault-inner">
+            <span class="vault-label">TARGET CODE</span>
+            <div class="vault-number" id="vault-display">?</div>
+            <span class="vault-status" id="vault-status">VAULT LOCKED</span>
+          </div>
+        </div>
+
+        <!-- Energy / Attempts Counter -->
+        <div class="attempts-container">
+          <div class="attempts-header">
+            <span class="attempts-title">ATTEMPTS REMAINING</span>
+            <span class="attempts-count" id="attempts-text">7 / 7</span>
+          </div>
+          <div class="attempts-bar-track">
+            <div class="attempts-bar-fill" id="attempts-bar" style="width: 100%;"></div>
+          </div>
+          <div class="hearts-row" id="hearts-container"></div>
+        </div>
+      </div>
+
+      <!-- Live Dynamic Range Indicator -->
+      <section class="range-tracker-card">
+        <div class="range-header">
+          <span>Search Window</span>
+          <span id="range-text" class="range-bounds-text">1 ━━━━━━━ ? ━━━━━━━ 100</span>
+        </div>
+        <div class="range-meter">
+          <span class="bound-label" id="bound-min">1</span>
+          <div class="range-track">
+            <div class="range-active-window" id="range-window" style="left: 0%; width: 100%;"></div>
+            <div class="last-guess-pin" id="guess-pin" style="display: none; left: 50%;"></div>
+          </div>
+          <span class="bound-label" id="bound-max">100</span>
+        </div>
+      </section>
+
+      <!-- Feedback Banner -->
+      <section class="feedback-container">
+        <div class="feedback-card" id="feedback-card">
+          <div class="feedback-icon" id="feedback-icon">🎯</div>
+          <div class="feedback-content">
+            <h2 class="feedback-title" id="feedback-title">AWAITING INPUT</h2>
+            <p class="feedback-detail" id="feedback-detail">Enter your guess within the target range to begin cracking.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Input Area -->
+      <section class="input-section">
+        <form id="guess-form" class="guess-form" onsubmit="return false;">
+          <div class="guess-input-wrapper">
+            <button type="button" class="step-btn" id="btn-step-down" aria-label="Decrease by 1">-</button>
+            <input 
+              type="number" 
+              id="guess-input" 
+              class="guess-input" 
+              placeholder="00" 
+              autocomplete="off" 
+              required
+              aria-label="Enter your guess"
+            />
+            <button type="button" class="step-btn" id="btn-step-up" aria-label="Increase by 1">+</button>
+          </div>
+
+          <div class="action-buttons">
+            <button type="submit" id="btn-submit-guess" class="btn btn-primary btn-glow">
+              <span class="btn-text">SUBMIT GUESS</span>
+              <span class="btn-icon">⚡</span>
+            </button>
+            <button type="button" id="btn-hint" class="btn btn-hint" title="Get a mathematical hint">
+              <span class="hint-icon">💡</span>
+              <span class="hint-label">INTEL HINT</span>
+              <span class="hint-badge" id="hint-count">3 left</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Hint Box Area (Dynamic) -->
+        <div id="hint-display" class="hint-display hidden">
+          <span class="hint-prefix">INTEL FEED:</span>
+          <span class="hint-message" id="hint-message">Scanning frequency...</span>
+        </div>
+      </section>
+
+      <!-- Guess History Log -->
+      <section class="history-section">
+        <div class="history-header">
+          <h3>TELEMETRY LOG (<span id="history-count">0</span>)</h3>
+          <span class="history-hint">Recent attempts</span>
+        </div>
+        <div class="history-list" id="history-list">
+          <div class="history-empty" id="history-empty">No telemetry recorded yet. Make your first guess!</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Stats / Credit -->
+    <footer class="app-footer">
+      <div class="quick-stats">
+        <div class="stat-item">
+          <span class="stat-num" id="stat-streak">0</span>
+          <span class="stat-name">Streak</span>
+        </div>
+        <div class="stat-sep">•</div>
+        <div class="stat-item">
+          <span class="stat-num" id="stat-wins">0</span>
+          <span class="stat-name">Wins</span>
+        </div>
+        <div class="stat-sep">•</div>
+        <div class="stat-item">
+          <span class="stat-num" id="stat-best">0</span>
+          <span class="stat-name">Best Record</span>
+        </div>
+      </div>
+      <p class="copyright">PYTHON BACKEND • PURE CSS ENGINE • 2026</p>
+    </footer>
+  </div>
+
+  <!-- End Game Modal -->
+  <div id="endgame-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-badge" id="modal-badge">MISSION COMPLETE</div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-icon" id="modal-icon">🏆</div>
+        <h2 class="modal-title" id="modal-title">VAULT BREACHED!</h2>
+        <p class="modal-desc" id="modal-desc">You successfully deduced the secret code in 4 attempts.</p>
+        
+        <div class="modal-stat-grid">
+          <div class="modal-stat-box">
+            <span class="box-label">Secret Code</span>
+            <span class="box-value accent-cyan" id="modal-secret-code">42</span>
+          </div>
+          <div class="modal-stat-box">
+            <span class="box-label">Attempts</span>
+            <span class="box-value" id="modal-attempts-used">4 / 7</span>
+          </div>
+          <div class="modal-stat-box">
+            <span class="box-label">Accuracy Score</span>
+            <span class="box-value accent-emerald" id="modal-score">850 pts</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-modal-restart" class="btn btn-primary btn-glow btn-full">
+          PLAY AGAIN ↺
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Modal -->
+  <div id="stats-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-badge">DATABASE</div>
+        <button id="btn-close-stats" class="icon-btn-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <h2 class="modal-title">AGENT PERFORMANCE</h2>
+        <div class="stats-overview">
+          <div class="metric-card">
+            <span class="metric-val" id="stat-modal-played">0</span>
+            <span class="metric-label">Games Played</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-val" id="stat-modal-wins">0</span>
+            <span class="metric-label">Victories</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-val" id="stat-modal-winrate">0%</span>
+            <span class="metric-label">Win Rate</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-val" id="stat-modal-streak">0</span>
+            <span class="metric-label">Current Streak</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-reset-stats" class="btn btn-secondary btn-sm">Clear History</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
