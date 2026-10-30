@@ -298,7 +298,7 @@ def run_server():
             )
             httpd.allow_reuse_address = True
             print("==================================================")
-            print("   🎮 CYBER-GUESS // NUMBER QUEST SERVER ONLINE    ")
+            print("   🎮 RANDOM-GUESS // NUMBER GUESS   ")
             print("==================================================")
             print(f"-> Local URL: http://localhost:{port}")
             print(f"-> Mode: Standalone Python HTTP Server")
