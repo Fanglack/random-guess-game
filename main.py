@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Cyber-Guess // Futuristic Number Guessing Game Server
-Built using Python standard library (http.server), HTML, and CSS.
+Built using Python standard library (http.server), HTML, and CSS..
 Zero external dependencies required.
 """
 
