@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class GameSession:
-    """Manages game logic, secret generation, proximity, and intel hints."""
+    """Manages game logic, secret generation, proximity, and intel hint."""
 
     def __init__(self, min_val=1, max_val=100, max_attempts=7):
         self.min_val = min_val
