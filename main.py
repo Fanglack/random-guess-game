@@ -52,13 +52,13 @@ class GameSession:
         # Determine proximity feedback
         if pct_diff <= 0.05:
             proximity = "hot"
-            proximity_desc = "🔥 Scorching Hot! You are razor close."
+            proximity_desc = "🔥 You are close."
         elif pct_diff <= 0.15:
             proximity = "warm"
-            proximity_desc = "⚡ Warm! Getting closer to the frequency."
+            proximity_desc = "⚡ Getting closer to the frequency."
         else:
             proximity = "cold"
-            proximity_desc = "❄️ Cold signal. Still far off target."
+            proximity_desc = "❄️ Still far off target."
 
         if guess == self.secret_number:
             self.game_over = True
