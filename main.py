@@ -2,7 +2,6 @@
 """
 Cyber-Guess // Futuristic Number Guessing Game Server
 Built using Python standard library (http.server), HTML, and CSS..
-Zero external dependencies required.
 """
 
 import http.server
