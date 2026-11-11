@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-// Futuristic Number Guessing Game Server
+// Number Guessing Game
 Built using Python standard library (http.server), HTML, and CSS..
 """
 
