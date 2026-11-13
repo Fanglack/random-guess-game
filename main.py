@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 // Number Guessing Game
-Built using Python standard library,HTML, and CSS..
+Built using Python ,HTML, and CSS..
 """
 
 import http.server
