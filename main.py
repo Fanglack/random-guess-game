@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-"""
-// Number Guessing Game
-Built using Python ,HTML, and CSS..
-"""
-
 import http.server
 import json
 import math
