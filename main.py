@@ -280,7 +280,7 @@ class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def run_server():
-    # Attempt to bind to requested port or fallback
+    
     target_port = PORT
     for port in [target_port, 8080, 5000, 3000, 8888]:
         try:
