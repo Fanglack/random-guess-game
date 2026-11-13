@@ -154,15 +154,14 @@ class GameSession:
         return int(base * efficiency) + (100 * self.attempts_left)
 
 
-# Active global game session
 current_session = GameSession(min_val=1, max_val=100, max_attempts=7)
 
 
 class GameHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-    """Custom HTTP Request Handler serving frontend files and JSON APIs."""
+  
 
     def log_message(self, format, *args):
-        # Clean formatted console log
+       
         sys.stderr.write(f"[{self.log_date_time_string()}] {format % args}\n")
 
     def _send_json_response(self, data: dict, status_code=HTTPStatus.OK):
