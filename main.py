@@ -30,7 +30,7 @@ class GameSession:
         """Evaluates a player's guess against the secret number."""
         if self.game_over:
             return {
-                "error": "Game is already completed.",
+                "error": "Game is completed.",
                 "game_over": True,
                 "result": "win" if self.won else "lose",
                 "secret": self.secret_number,
